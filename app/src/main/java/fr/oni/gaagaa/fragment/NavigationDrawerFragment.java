@@ -1,4 +1,4 @@
-package fr.oni.gaagaa;
+package fr.oni.gaagaa.fragment;
 
 
 import android.app.Activity;
@@ -22,6 +22,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import fr.oni.gaagaa.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

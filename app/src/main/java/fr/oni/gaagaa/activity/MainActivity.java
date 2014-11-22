@@ -1,4 +1,4 @@
-package fr.oni.gaagaa;
+package fr.oni.gaagaa.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -12,6 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import fr.oni.gaagaa.fragment.NavigationDrawerFragment;
+import fr.oni.gaagaa.R;
 
 
 public class MainActivity extends ActionBarActivity
