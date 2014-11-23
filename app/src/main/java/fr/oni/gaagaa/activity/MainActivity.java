@@ -3,18 +3,33 @@ package fr.oni.gaagaa.activity;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
-import fr.oni.gaagaa.fragment.NavigationDrawerFragment;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.List;
+
 import fr.oni.gaagaa.R;
+import fr.oni.gaagaa.fragment.NavigationDrawerFragment;
+import fr.oni.gaagaa.model.twitter.Authenticated;
+import fr.oni.gaagaa.model.twitter.Tweet;
+import fr.oni.gaagaa.api.TwitterApi;
+import retrofit.RestAdapter;
+import retrofit.converter.GsonConverter;
 
 
 public class MainActivity extends ActionBarActivity
@@ -30,6 +45,45 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
 
+    class TwitterTask extends AsyncTask<Void, Void, String> {
+        TextView textView;
+        TwitterApi twitterApi;
+
+        TwitterTask(TextView textView) {
+            this.textView = textView;
+            Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+            RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("https://api.twitter.com")
+                    .setConverter(new GsonConverter(gson))
+                    .setLogLevel(RestAdapter.LogLevel.FULL)
+                    .build();
+            this.twitterApi = restAdapter.create(TwitterApi.class);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String twitterApiKey = "Do you think I leave my API KEY here?";
+            String twitterApiSecret = "Same here";
+            String combined = twitterApiKey + ":" + twitterApiSecret;
+
+            String base64Encoded = Base64.encodeToString(combined.getBytes(), Base64.NO_WRAP);
+
+            Authenticated authenticated = twitterApi.authorizeUser("Basic " + base64Encoded, "client_credentials");
+            String result = null;
+            if (authenticated != null && authenticated.getTokenType().equals("bearer")) {
+                List<Tweet> results = twitterApi.getTwitterStream("Bearer " + authenticated.getAccessToken(),"players","MLS");
+
+                result = results.get(0).getText() + "\n" + results.get(0).getUser().getName();
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            textView.setText(s);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +97,12 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        FrameLayout layout = (FrameLayout) findViewById(R.id.container);
+        TextView textView = new TextView(getApplicationContext());
+        layout.addView(textView);
+
+        new TwitterTask(textView).execute();
     }
 
     @Override
