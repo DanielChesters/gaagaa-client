@@ -16,22 +16,14 @@ import retrofit.http.Query;
 
 public interface TwitterApi {
 
-    @FormUrlEncoded
-    @POST("/oauth2/token")
-    Authenticated authorizeUser(@Header("Authorization") String authorization,
-                                @Field("grant_type") String grantType);
-
-    @Headers({
-            "Content-Type: application/json"
-    })
-    @GET("/1.1/lists/statuses.json")
+    @GET("/lists/statuses.json")
     List<Tweet> getTwitterStream(@Query("slug") String slug,
                                  @Query("owner_screen_name") String screenName);
 
-    @GET("/1.1/account/verify_credentials.json")
+    @GET("/account/verify_credentials.json")
     TwitterUser verifyCredentials(@Header("Authorization") String authorization);
 
-    @POST("/1.1/statuses/update.json")
+    @POST("/statuses/update.json")
     Tweet sendUpdate(@Header("Authorization") String authorization, @Body String status);
 
     @GET("/statuses/user_timeline.json")
