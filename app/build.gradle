@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'sonar-runner'
+apply from: '../config/quality.gradle'
 
 android {
     compileSdkVersion 21
@@ -24,19 +24,6 @@ android {
     }
     lintOptions {
         lintConfig file("lint.xml")
-    }
-}
-
-sonarRunner {
-    sonarProperties {
-        property 'sonar.projectKey', 'fr:oni:gaagaa'
-        property 'sonar.projectName', 'GaaGaa'
-        property 'sonar.projectVersion', '0.1'
-        property "sonar.language", "java"
-        properties['sonar.sources'] = android.sourceSets.main.java.srcDirs
-        properties['sonar.tests'] = android.sourceSets.androidTest.java.srcDirs
-        properties['sonar.binaries'] = file("build/intermediates/classes/debug")
-        property 'sonar.junit.reportsPath','build/instrumentTest-results/connected/'
     }
 }
 
