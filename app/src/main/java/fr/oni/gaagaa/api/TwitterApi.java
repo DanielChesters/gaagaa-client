@@ -18,11 +18,15 @@ public interface TwitterApi {
 
     @FormUrlEncoded
     @POST("/oauth2/token")
-    Authenticated authorizeUser(@Header("Authorization") String authorization, @Field("grant_type") String grantType);
+    Authenticated authorizeUser(@Header("Authorization") String authorization,
+                                @Field("grant_type") String grantType);
 
-    @Headers({"Content-Type: application/json"})
+    @Headers({
+            "Content-Type: application/json"
+    })
     @GET("/1.1/lists/statuses.json")
-    List<Tweet> getTwitterStream(@Query("slug") String slug, @Query("owner_screen_name") String screenName);
+    List<Tweet> getTwitterStream(@Query("slug") String slug,
+                                 @Query("owner_screen_name") String screenName);
 
     @GET("/1.1/account/verify_credentials.json")
     TwitterUser verifyCredentials(@Header("Authorization") String authorization);

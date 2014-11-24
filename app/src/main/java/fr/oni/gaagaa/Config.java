@@ -1,7 +1,10 @@
 package fr.oni.gaagaa;
 
-public class Config {
-    final static public String twitterApiKey = "NOPE";
-    final static public String twitterApiSecret = "BiteMyShinnyMetalAss";
+public final class Config {
+    private Config() {
+    }
 
+    public static final String TWITTER_API_KEY = "NOPE";
+    public static final String TWITTER_API_SECRET
+            = "BiteMyShinnyMetalAss";
 }

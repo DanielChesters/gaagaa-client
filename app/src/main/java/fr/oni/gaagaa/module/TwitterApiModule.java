@@ -20,7 +20,7 @@ public class TwitterApiModule {
     private TwitterApi twitterApi;
 
     public void init(String token, String tokenSecret) {
-        OAuthConsumer consumer = new DefaultOAuthConsumer(Config.twitterApiKey, Config.twitterApiSecret);
+        OAuthConsumer consumer = new DefaultOAuthConsumer(Config.TWITTER_API_KEY, Config.TWITTER_API_SECRET);
         consumer.setTokenWithSecret(token, tokenSecret);
         Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
         RestAdapter adapter = new RestAdapter.Builder()

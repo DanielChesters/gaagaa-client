@@ -23,7 +23,7 @@ import oauth.signpost.exception.OAuthNotAuthorizedException;
 
 public class TwitterAuthActivity extends ActionBarActivity {
     private static final String TAG = TwitterAuthActivity.class.getSimpleName();
-    private final static String CALLBACK = "oauth://twitter";
+    private static final String CALLBACK = "oauth://twitter";
 
     private WebView webView;
     private String authUrl;
@@ -85,11 +85,12 @@ public class TwitterAuthActivity extends ActionBarActivity {
             protected void onPostExecute(Void aVoid) {
                 finish();
             }
-        }.execute();
+        }
+                .execute();
     }
 
     private void initTwitter() {
-        consumer = new DefaultOAuthConsumer(Config.twitterApiKey, Config.twitterApiSecret);
+        consumer = new DefaultOAuthConsumer(Config.TWITTER_API_KEY, Config.TWITTER_API_SECRET);
 
         provider = new DefaultOAuthProvider(
                 "https://api.twitter.com/oauth/request_token",
@@ -122,7 +123,8 @@ public class TwitterAuthActivity extends ActionBarActivity {
                     webView.loadUrl(authUrl);
                 }
             }
-        }.execute();
+        }
+                .execute();
 
     }
 }
