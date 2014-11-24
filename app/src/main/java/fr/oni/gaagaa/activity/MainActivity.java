@@ -3,12 +3,14 @@ package fr.oni.gaagaa.activity;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Base64;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,19 +19,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.List;
 
 import fr.oni.gaagaa.R;
 import fr.oni.gaagaa.fragment.NavigationDrawerFragment;
-import fr.oni.gaagaa.model.twitter.Authenticated;
 import fr.oni.gaagaa.model.twitter.Tweet;
-import fr.oni.gaagaa.api.TwitterApi;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
+import fr.oni.gaagaa.module.TwitterApiModule;
+import fr.oni.gaagaa.util.PrefUtil;
 
 
 public class MainActivity extends ActionBarActivity
@@ -43,39 +39,27 @@ public class MainActivity extends ActionBarActivity
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
-    private CharSequence mTitle;
+    private CharSequence title;
+    private TextView textView;
 
     class TwitterTask extends AsyncTask<Void, Void, String> {
         TextView textView;
-        TwitterApi twitterApi;
+        TwitterApiModule twitterApiModule;
 
-        TwitterTask(TextView textView) {
+        TwitterTask(TextView textView, String token, String tokenSecret) {
             this.textView = textView;
-            Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-            RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("https://api.twitter.com")
-                    .setConverter(new GsonConverter(gson))
-                    .setLogLevel(RestAdapter.LogLevel.FULL)
-                    .build();
-            this.twitterApi = restAdapter.create(TwitterApi.class);
+            this.twitterApiModule = new TwitterApiModule();
+            twitterApiModule.init(token, tokenSecret);
         }
 
         @Override
         protected String doInBackground(Void... params) {
-            String twitterApiKey = "Do you think I leave my API KEY here?";
-            String twitterApiSecret = "Same here";
-            String combined = twitterApiKey + ":" + twitterApiSecret;
-
-            String base64Encoded = Base64.encodeToString(combined.getBytes(), Base64.NO_WRAP);
-
-            Authenticated authenticated = twitterApi.authorizeUser("Basic " + base64Encoded, "client_credentials");
-            String result = null;
-            if (authenticated != null && authenticated.getTokenType().equals("bearer")) {
-                List<Tweet> results = twitterApi.getTwitterStream("Bearer " + authenticated.getAccessToken(),"players","MLS");
-
-                result = results.get(0).getText() + "\n" + results.get(0).getUser().getName();
+            List<Tweet> tweets = twitterApiModule.getUserTimeline("___Oni___", 10);
+            String tweetString = "";
+            for (Tweet tweet : tweets) {
+                tweetString += String.format("%s\n%s(%s)\n\n", tweet.getText(), tweet.getUser().getName(), tweet.getDateCreated());
             }
-
-            return result;
+            return tweetString;
         }
 
         @Override
@@ -91,7 +75,7 @@ public class MainActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+        title = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -99,10 +83,23 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
-        TextView textView = new TextView(getApplicationContext());
+        this.textView = new TextView(getApplicationContext());
+        textView.setTextColor(Color.BLACK);
         layout.addView(textView);
+    }
 
-        new TwitterTask(textView).execute();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String token = PrefUtil.getTwitterToken(this);
+        String tokenSecret = PrefUtil.getTwitterTokenSecret(this);
+
+        if (TextUtils.isEmpty(token) || TextUtils.isEmpty(tokenSecret)) {
+            Intent intent = new Intent(this, TwitterAuthActivity.class);
+            startActivity(intent);
+        } else {
+            new TwitterTask(textView, token, tokenSecret).execute();
+        }
     }
 
     @Override
@@ -117,13 +114,13 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                title = getString(R.string.title_section1);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                title = getString(R.string.title_section2);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                title = getString(R.string.title_section3);
                 break;
         }
     }
@@ -131,7 +128,7 @@ public class MainActivity extends ActionBarActivity
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        actionBar.setTitle(title);
     }
 
 

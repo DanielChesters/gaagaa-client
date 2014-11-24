@@ -13,7 +13,6 @@ import retrofit.http.Header;
 import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.Query;
-import retrofit.mime.TypedString;
 
 public interface TwitterApi {
 
@@ -21,9 +20,9 @@ public interface TwitterApi {
     @POST("/oauth2/token")
     Authenticated authorizeUser(@Header("Authorization") String authorization, @Field("grant_type") String grantType);
 
-    @Headers({ "Content-Type: application/json" })
+    @Headers({"Content-Type: application/json"})
     @GET("/1.1/lists/statuses.json")
-    List<Tweet> getTwitterStream(@Header("Authorization") String authorization, @Query("slug") String slug, @Query("owner_screen_name") String screenName);
+    List<Tweet> getTwitterStream(@Query("slug") String slug, @Query("owner_screen_name") String screenName);
 
     @GET("/1.1/account/verify_credentials.json")
     TwitterUser verifyCredentials(@Header("Authorization") String authorization);
@@ -31,5 +30,6 @@ public interface TwitterApi {
     @POST("/1.1/statuses/update.json")
     Tweet sendUpdate(@Header("Authorization") String authorization, @Body String status);
 
-
+    @GET("/statuses/user_timeline.json")
+    List<Tweet> getUserTimeline(@Query("screen_name") String screenName, @Query("count") int count);
 }
