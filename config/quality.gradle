@@ -20,14 +20,15 @@ task findbugs(type: FindBugs) {
     excludeFilter = new File("${project.rootDir}/config/quality/findbugs/findbugs-filter.xml")
     classes = files("$project.buildDir/intermediates/classes/")
 
-    source 'src'
+    source fileTree('src/main/java')
     include '**/*.java'
     exclude '**/gen/**'
 
     reports {
-        xml {
-            destination "$project.buildDir/reports/findbugs/findbugs.xml"
-            xml.withMessages true
+        xml.enabled = false
+        html.enabled = true
+        html {
+            destination "$project.buildDir/reports/findbugs/findbugs.html"
         }
     }
 
@@ -37,14 +38,17 @@ task findbugs(type: FindBugs) {
 task pmd(type: Pmd) {
     ruleSetFiles = files("${project.rootDir}/config/quality/pmd/pmd-ruleset.xml")
     ignoreFailures = true
-    ruleSets = ["java-basic", "java-braces", "java-strings"]
+    ruleSets = ['java-basic', 'java-braces', 'java-strings', 'java-design', 'java-unusedcode', 'java-android']
 
     source 'src'
     include '**/*.java'
     exclude '**/gen/**'
 
     reports {
-        xml.enabled = true
-        html.enabled = false
+        xml.enabled = false
+        html.enabled = true
+        html {
+            destination "$project.buildDir/reports/pmd/pmd.html"
+        }
     }
 }
