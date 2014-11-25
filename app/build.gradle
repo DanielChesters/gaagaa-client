@@ -24,13 +24,21 @@ android {
     }
 }
 
+ext {
+    comAndroidSupportVersion='21.0.2'
+    retrofitVersion='1.8.0'
+    gsonVersion='2.3.1'
+    okhttpVersion='2.0.0'
+    signpostVersion='1.2.1.2'
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:21.0.2'
-    compile 'com.android.support:appcompat-v7:21.0.2'
-    compile 'com.squareup.retrofit:retrofit:1.8.0'
-    compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
-    compile 'com.squareup.okhttp:okhttp:2.0.0'
-    compile 'oauth.signpost:signpost-core:1.2.1.2'
+    compile "com.android.support:support-v4:$comAndroidSupportVersion"
+    compile "com.android.support:appcompat-v7:$comAndroidSupportVersion"
+    compile "com.squareup.retrofit:retrofit:$retrofitVersion"
+    compile "com.google.code.gson:gson:$gsonVersion"
+    compile "com.squareup.okhttp:okhttp-urlconnection:$okhttpVersion"
+    compile "com.squareup.okhttp:okhttp:$okhttpVersion"
+    compile "oauth.signpost:signpost-core:$signpostVersion"
 }
