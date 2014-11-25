@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private NavigationDrawerFragment navigationDrawerFragment;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -42,43 +42,17 @@ public class MainActivity extends ActionBarActivity
     private CharSequence title;
     private TextView textView;
 
-    class TwitterTask extends AsyncTask<Void, Void, String> {
-        TextView textView;
-        TwitterApiModule twitterApiModule;
-
-        TwitterTask(TextView textView, String token, String tokenSecret) {
-            this.textView = textView;
-            this.twitterApiModule = new TwitterApiModule();
-            twitterApiModule.init(token, tokenSecret);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<Tweet> tweets = twitterApiModule.getUserTimeline("___Oni___", 10);
-            String tweetString = "";
-            for (Tweet tweet : tweets) {
-                tweetString += String.format("%s\n%s(%s)\n\n", tweet.getText(), tweet.getUser().getName(), tweet.getDateCreated());
-            }
-            return tweetString;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            textView.setText(s);
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
+        navigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         title = getTitle();
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
+        navigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
@@ -122,6 +96,8 @@ public class MainActivity extends ActionBarActivity
             case 3:
                 title = getString(R.string.title_section3);
                 break;
+            default:
+                break;
         }
     }
 
@@ -134,7 +110,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+        if (!navigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
@@ -182,9 +158,6 @@ public class MainActivity extends ActionBarActivity
             return fragment;
         }
 
-        public PlaceholderFragment() {
-        }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -199,4 +172,30 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    private static class TwitterTask extends AsyncTask<Void, Void, String> {
+        private TextView textView;
+        private TwitterApiModule twitterApiModule;
+
+        TwitterTask(TextView textView, String token, String tokenSecret) {
+            this.textView = textView;
+            this.twitterApiModule = new TwitterApiModule();
+            twitterApiModule.init(token, tokenSecret);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            List<Tweet> tweets = twitterApiModule.getUserTimeline("___Oni___", 10);
+            String tweetString = "";
+            for (Tweet tweet : tweets) {
+                tweetString += String.format("%s\n%s(%s)\n\n", tweet.getText(),
+                        tweet.getUser().getName(), tweet.getDateCreated());
+            }
+            return tweetString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            textView.setText(s);
+        }
+    }
 }

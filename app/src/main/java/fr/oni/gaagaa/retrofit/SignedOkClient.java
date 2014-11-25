@@ -1,5 +1,7 @@
 package fr.oni.gaagaa.retrofit;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
@@ -11,6 +13,7 @@ import retrofit.client.OkClient;
 import retrofit.client.Request;
 
 public class SignedOkClient extends OkClient {
+    private static final String TAG = SignedOkClient.class.getSimpleName();
     private OAuthConsumer consumer;
 
     public SignedOkClient(OAuthConsumer consumer) {
@@ -24,11 +27,11 @@ public class SignedOkClient extends OkClient {
         try {
             consumer.sign(connection);
         } catch (OAuthCommunicationException e) {
-            e.printStackTrace();
+            Log.e(TAG, "error : " + e.getMessage(), e);
         } catch (OAuthMessageSignerException e) {
-            e.printStackTrace();
+            Log.e(TAG, "error : " + e.getMessage(), e);
         } catch (OAuthExpectationFailedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "error : " + e.getMessage(), e);
         }
         return connection;
     }

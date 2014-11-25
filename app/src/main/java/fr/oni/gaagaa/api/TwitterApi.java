@@ -2,15 +2,11 @@ package fr.oni.gaagaa.api;
 
 import java.util.List;
 
-import fr.oni.gaagaa.model.twitter.Authenticated;
 import fr.oni.gaagaa.model.twitter.Tweet;
 import fr.oni.gaagaa.model.twitter.TwitterUser;
 import retrofit.http.Body;
-import retrofit.http.Field;
-import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
-import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.Query;
 
