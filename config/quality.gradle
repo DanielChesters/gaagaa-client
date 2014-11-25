@@ -18,7 +18,7 @@ task checkstyle(type: Checkstyle) {
 
 
 task findbugs(type: FindBugs) {
-    ignoreFailures = false
+    ignoreFailures = true
     effort = "max"
     reportLevel = "high"
     excludeFilter = new File("${project.rootDir}/config/quality/findbugs/findbugs-filter.xml")
@@ -44,7 +44,7 @@ task findbugs(type: FindBugs) {
 
 task pmd(type: Pmd) {
     ruleSetFiles = files("${project.rootDir}/config/quality/pmd/pmd-ruleset.xml")
-    ignoreFailures = false
+    ignoreFailures = true
     ruleSets = []
 
     source 'src'
@@ -65,7 +65,7 @@ task pmd(type: Pmd) {
 
 android {
     lintOptions {
-        abortOnError true
+        abortOnError false
 
         lintConfig file("${project.rootDir}/config/quality/lint/lint.xml")
 
