@@ -30,6 +30,8 @@ ext {
     gsonVersion='2.3.1'
     okhttpVersion='2.0.0'
     signpostVersion='1.2.1.2'
+    rxjavaVersion='1.0.0'
+    rxandroidVersion='0.23.0'
 }
 
 dependencies {
@@ -41,4 +43,6 @@ dependencies {
     compile "com.squareup.okhttp:okhttp-urlconnection:$okhttpVersion"
     compile "com.squareup.okhttp:okhttp:$okhttpVersion"
     compile "oauth.signpost:signpost-core:$signpostVersion"
+    compile "io.reactivex:rxjava:$rxjavaVersion"
+    compile "io.reactivex:rxandroid:$rxandroidVersion"
 }
