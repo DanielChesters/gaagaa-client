@@ -26,11 +26,8 @@ public class SignedOkClient extends OkClient {
         HttpURLConnection connection = super.openConnection(request);
         try {
             consumer.sign(connection);
-        } catch (OAuthCommunicationException e) {
-            Log.e(TAG, "error : " + e.getMessage(), e);
-        } catch (OAuthMessageSignerException e) {
-            Log.e(TAG, "error : " + e.getMessage(), e);
-        } catch (OAuthExpectationFailedException e) {
+        } catch (OAuthCommunicationException | OAuthMessageSignerException
+                | OAuthExpectationFailedException e) {
             Log.e(TAG, "error : " + e.getMessage(), e);
         }
         return connection;

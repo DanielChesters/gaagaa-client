@@ -69,13 +69,8 @@ public class TwitterAuthActivity extends ActionBarActivity {
                     String tokenSecret = consumer.getTokenSecret();
                     PrefUtil.setTwitterToken(TwitterAuthActivity.this, token);
                     PrefUtil.setTwitterTokenSecret(TwitterAuthActivity.this, tokenSecret);
-                } catch (OAuthMessageSignerException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                } catch (OAuthNotAuthorizedException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                } catch (OAuthExpectationFailedException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                } catch (OAuthCommunicationException e) {
+                } catch (OAuthMessageSignerException | OAuthNotAuthorizedException
+                        | OAuthExpectationFailedException | OAuthCommunicationException e) {
                     Log.e(TAG, e.getMessage(), e);
                 }
                 return null;
@@ -105,13 +100,8 @@ public class TwitterAuthActivity extends ActionBarActivity {
                 try {
                     authUrl = provider.retrieveRequestToken(consumer, CALLBACK);
                     Log.d(TAG, "authUrl " + authUrl);
-                } catch (OAuthMessageSignerException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                } catch (OAuthNotAuthorizedException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                } catch (OAuthExpectationFailedException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                } catch (OAuthCommunicationException e) {
+                } catch (OAuthMessageSignerException | OAuthNotAuthorizedException
+                        | OAuthExpectationFailedException | OAuthCommunicationException e) {
                     Log.e(TAG, e.getMessage(), e);
                 }
                 return null;
