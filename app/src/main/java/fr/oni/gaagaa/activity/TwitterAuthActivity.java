@@ -22,6 +22,7 @@ import oauth.signpost.exception.OAuthNotAuthorizedException;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -147,7 +148,7 @@ public class TwitterAuthActivity extends ActionBarActivity {
                     subscriber.onError(e);
                 }
             }
-        }).subscribeOn(Schedulers.io());
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     private Observable<Token> getTwitterToken(final Uri uri) {
@@ -167,7 +168,7 @@ public class TwitterAuthActivity extends ActionBarActivity {
                     subscriber.onError(e);
                 }
             }
-        }).subscribeOn(Schedulers.io());
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     private static final class Token {
