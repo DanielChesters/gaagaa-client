@@ -5,6 +5,7 @@
 
 
 <module name="Checker">
+    <property name="severity" value="warning" />
     <module name="FileLength">
         <property name="max" value="500"/>
         <property name="fileExtensions" value=""/>
