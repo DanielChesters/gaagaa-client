@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,11 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import java.util.List;
 
 import fr.oni.gaagaa.R;
+import fr.oni.gaagaa.adapter.TweetsAdapter;
 import fr.oni.gaagaa.fragment.NavigationDrawerFragment;
 import fr.oni.gaagaa.model.twitter.Tweet;
 import fr.oni.gaagaa.module.TwitterApiModule;
@@ -47,9 +50,9 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence title;
 
-    private TextView textView;
     private Subscription twitterUserTimelineSubscription;
     private TwitterApiModule twitterApiModule;
+    private TweetsAdapter tweetsAdapter;
 
     @Override
     protected void onDestroy() {
@@ -72,9 +75,17 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
-        this.textView = new TextView(getApplicationContext());
-        textView.setTextColor(Color.BLACK);
-        layout.addView(textView);
+        RelativeLayout listTweetsLayout = (RelativeLayout) getLayoutInflater()
+                .inflate(R.layout.fragment_list_tweets, null);
+
+        RecyclerView listTweets = (RecyclerView) listTweetsLayout.findViewById(R.id.list_tweets);
+        listTweets.setLayoutManager(new LinearLayoutManager(this));
+        listTweets.setItemAnimator(new DefaultItemAnimator());
+
+        tweetsAdapter = new TweetsAdapter();
+        listTweets.setAdapter(tweetsAdapter);
+
+        layout.addView(listTweetsLayout);
     }
 
     @Override
@@ -89,8 +100,7 @@ public class MainActivity extends ActionBarActivity
         } else {
             twitterApiModule = new TwitterApiModule();
             twitterApiModule.init(token, tokenSecret);
-            final StringBuilder stringBuilder = new StringBuilder();
-            twitterUserTimelineSubscription = twitterApiModule.getUserTimeline("___Oni___", 10)
+            twitterUserTimelineSubscription = twitterApiModule.getUserTimeline("___Oni___", 20)
                     .flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
                         @Override
                         public Observable<Tweet> call(List<Tweet> tweets) {
@@ -100,8 +110,7 @@ public class MainActivity extends ActionBarActivity
                     .subscribe(new Action1<Tweet>() {
                         @Override
                         public void call(Tweet tweet) {
-                            stringBuilder.append(String.format("%s\n%s(%s)\n\n", tweet.getText(),
-                                    tweet.getUser().getName(), tweet.getDateCreated()));
+                            tweetsAdapter.getTweets().add(tweet);
                         }
                     }, new Action1<Throwable>() {
                         @Override
@@ -111,7 +120,7 @@ public class MainActivity extends ActionBarActivity
                     }, new Action0() {
                         @Override
                         public void call() {
-                            textView.setText(stringBuilder.toString());
+                            tweetsAdapter.notifyDataSetChanged();
                         }
                     });
         }

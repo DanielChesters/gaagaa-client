@@ -38,6 +38,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:support-v4:$comAndroidSupportVersion"
     compile "com.android.support:appcompat-v7:$comAndroidSupportVersion"
+    compile "com.android.support:recyclerview-v7:$comAndroidSupportVersion"
     compile "com.squareup.retrofit:retrofit:$retrofitVersion"
     compile "com.google.code.gson:gson:$gsonVersion"
     compile "com.squareup.okhttp:okhttp-urlconnection:$okhttpVersion"
