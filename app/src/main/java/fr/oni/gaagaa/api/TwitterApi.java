@@ -6,7 +6,6 @@ import fr.oni.gaagaa.model.twitter.Tweet;
 import fr.oni.gaagaa.model.twitter.TwitterUser;
 import retrofit.http.Body;
 import retrofit.http.GET;
-import retrofit.http.Header;
 import retrofit.http.POST;
 import retrofit.http.Query;
 
@@ -17,10 +16,10 @@ public interface TwitterApi {
                                  @Query("owner_screen_name") String screenName);
 
     @GET("/account/verify_credentials.json")
-    TwitterUser verifyCredentials(@Header("Authorization") String authorization);
+    TwitterUser verifyCredentials();
 
     @POST("/statuses/update.json")
-    Tweet sendUpdate(@Header("Authorization") String authorization, @Body String status);
+    Tweet sendUpdate(@Body String status);
 
     @GET("/statuses/user_timeline.json")
     List<Tweet> getUserTimeline(@Query("screen_name") String screenName, @Query("count") int count);
