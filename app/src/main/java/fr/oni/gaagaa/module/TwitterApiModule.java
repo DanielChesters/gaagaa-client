@@ -15,6 +15,9 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class TwitterApiModule {
     private TwitterApi twitterApi;
@@ -33,11 +36,15 @@ public class TwitterApiModule {
         twitterApi = adapter.create(TwitterApi.class);
     }
 
-    public List<Tweet> getTwitterStream(String slug, String screenName) {
-        return twitterApi.getTwitterStream(slug, screenName);
+    public Observable<List<Tweet>> getTwitterStream(String slug, String screenName) {
+        return twitterApi.getTwitterStream(slug, screenName)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
 
-    public List<Tweet> getUserTimeline(String screenName, int count) {
-        return twitterApi.getUserTimeline(screenName, count);
+    public Observable<List<Tweet>> getUserTimeline(String screenName, int count) {
+        return twitterApi.getUserTimeline(screenName, count)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
 }

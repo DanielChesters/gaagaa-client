@@ -5,12 +5,12 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +26,17 @@ import fr.oni.gaagaa.fragment.NavigationDrawerFragment;
 import fr.oni.gaagaa.model.twitter.Tweet;
 import fr.oni.gaagaa.module.TwitterApiModule;
 import fr.oni.gaagaa.util.PrefUtil;
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -40,7 +46,16 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence title;
+
     private TextView textView;
+    private Subscription twitterUserTimelineSubscription;
+    private TwitterApiModule twitterApiModule;
+
+    @Override
+    protected void onDestroy() {
+        twitterUserTimelineSubscription.unsubscribe();
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +87,33 @@ public class MainActivity extends ActionBarActivity
             Intent intent = new Intent(this, TwitterAuthActivity.class);
             startActivity(intent);
         } else {
-            new TwitterTask(textView, token, tokenSecret).execute();
+            twitterApiModule = new TwitterApiModule();
+            twitterApiModule.init(token, tokenSecret);
+            final StringBuilder stringBuilder = new StringBuilder();
+            twitterUserTimelineSubscription = twitterApiModule.getUserTimeline("___Oni___", 10)
+                    .flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
+                        @Override
+                        public Observable<Tweet> call(List<Tweet> tweets) {
+                            return Observable.from(tweets);
+                        }
+                    })
+                    .subscribe(new Action1<Tweet>() {
+                        @Override
+                        public void call(Tweet tweet) {
+                            stringBuilder.append(String.format("%s\n%s(%s)\n\n", tweet.getText(),
+                                    tweet.getUser().getName(), tweet.getDateCreated()));
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            Log.e(TAG, throwable.getMessage(), throwable);
+                        }
+                    }, new Action0() {
+                        @Override
+                        public void call() {
+                            textView.setText(stringBuilder.toString());
+                        }
+                    });
         }
     }
 
@@ -169,33 +210,6 @@ public class MainActivity extends ActionBarActivity
             super.onAttach(activity);
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
-        }
-    }
-
-    private static class TwitterTask extends AsyncTask<Void, Void, String> {
-        private TextView textView;
-        private TwitterApiModule twitterApiModule;
-
-        TwitterTask(TextView textView, String token, String tokenSecret) {
-            this.textView = textView;
-            this.twitterApiModule = new TwitterApiModule();
-            twitterApiModule.init(token, tokenSecret);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<Tweet> tweets = twitterApiModule.getUserTimeline("___Oni___", 10);
-            String tweetString = "";
-            for (Tweet tweet : tweets) {
-                tweetString += String.format("%s\n%s(%s)\n\n", tweet.getText(),
-                        tweet.getUser().getName(), tweet.getDateCreated());
-            }
-            return tweetString;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            textView.setText(s);
         }
     }
 }

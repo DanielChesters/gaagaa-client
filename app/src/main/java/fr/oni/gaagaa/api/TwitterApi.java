@@ -8,19 +8,20 @@ import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Query;
+import rx.Observable;
 
 public interface TwitterApi {
 
     @GET("/lists/statuses.json")
-    List<Tweet> getTwitterStream(@Query("slug") String slug,
+    Observable<List<Tweet>> getTwitterStream(@Query("slug") String slug,
                                  @Query("owner_screen_name") String screenName);
 
     @GET("/account/verify_credentials.json")
-    TwitterUser verifyCredentials();
+    Observable<TwitterUser> verifyCredentials();
 
     @POST("/statuses/update.json")
-    Tweet sendUpdate(@Body String status);
+    Observable<Tweet> sendUpdate(@Body String status);
 
     @GET("/statuses/user_timeline.json")
-    List<Tweet> getUserTimeline(@Query("screen_name") String screenName, @Query("count") int count);
+    Observable<List<Tweet>> getUserTimeline(@Query("screen_name") String screenName, @Query("count") int count);
 }
