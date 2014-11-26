@@ -74,33 +74,27 @@ public class TwitterAuthActivity extends ActionBarActivity {
     }
 
     private void onOAuthCallback(Uri uri) {
-        Action1<Token> onNextAction = new Action1<Token>() {
-            @Override
-            public void call(Token token) {
-                PrefUtil.setTwitterToken(TwitterAuthActivity.this, token.getKey());
-                PrefUtil.setTwitterTokenSecret(TwitterAuthActivity.this, token.getSecret());
-            }
-        };
-
-        Action1<Throwable> onErrorAction = new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                Log.e(TAG, throwable.getMessage(), throwable);
-                Toast.makeText(TwitterAuthActivity.this,
-                        String.format("Error : %s", throwable.getMessage()),
-                        Toast.LENGTH_LONG).show();
-            }
-        };
-
-        Action0 onCompleteAction = new Action0() {
-            @Override
-            public void call() {
-                finish();
-            }
-        };
-
-        twitterTokenSubscription = getTwitterToken(uri).subscribe(onNextAction, onErrorAction,
-                onCompleteAction);
+        twitterTokenSubscription = getTwitterToken(uri).subscribe(
+                new Action1<Token>() {
+                    @Override
+                    public void call(Token token) {
+                        PrefUtil.setTwitterToken(TwitterAuthActivity.this, token.getKey());
+                        PrefUtil.setTwitterTokenSecret(TwitterAuthActivity.this, token.getSecret());
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+                        Toast.makeText(TwitterAuthActivity.this,
+                                String.format("Error : %s", throwable.getMessage()),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }, new Action0() {
+                    @Override
+                    public void call() {
+                        finish();
+                    }
+                });
     }
 
     private void initTwitter() {
@@ -112,34 +106,28 @@ public class TwitterAuthActivity extends ActionBarActivity {
                 "https://api.twitter.com/oauth/authorize"
         );
 
-        Action1<String> onNextAction = new Action1<String>() {
-            @Override
-            public void call(String s) {
-                authUrl = s;
-            }
-        };
-
-        Action1<Throwable> onErrorAction = new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                Log.e(TAG, throwable.getMessage(), throwable);
-                Toast.makeText(TwitterAuthActivity.this,
-                        String.format("Error : %s", throwable.getMessage()),
-                        Toast.LENGTH_LONG).show();
-            }
-        };
-
-        Action0 onCompleteAction = new Action0() {
-            @Override
-            public void call() {
-                if (!TextUtils.isEmpty(authUrl)) {
-                    webView.loadUrl(authUrl);
-                }
-            }
-        };
-
-        twitterWebAuthSubscription = getTwitterWebAuth()
-                .subscribe(onNextAction, onErrorAction, onCompleteAction);
+        twitterWebAuthSubscription = getTwitterWebAuth().subscribe(
+                new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        authUrl = s;
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+                        Toast.makeText(TwitterAuthActivity.this,
+                                String.format("Error : %s", throwable.getMessage()),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }, new Action0() {
+                    @Override
+                    public void call() {
+                        if (!TextUtils.isEmpty(authUrl)) {
+                            webView.loadUrl(authUrl);
+                        }
+                    }
+                });
     }
 
     private Observable<String> getTwitterWebAuth() {
