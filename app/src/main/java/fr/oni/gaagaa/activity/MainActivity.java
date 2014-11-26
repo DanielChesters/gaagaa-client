@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -116,6 +117,9 @@ public class MainActivity extends ActionBarActivity
                         @Override
                         public void call(Throwable throwable) {
                             Log.e(TAG, throwable.getMessage(), throwable);
+                            Toast.makeText(MainActivity.this,
+                                    String.format("Error : %s", throwable.getMessage()),
+                                    Toast.LENGTH_LONG).show();
                         }
                     }, new Action0() {
                         @Override

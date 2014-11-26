@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import fr.oni.gaagaa.Config;
 import fr.oni.gaagaa.R;
@@ -85,6 +86,9 @@ public class TwitterAuthActivity extends ActionBarActivity {
             @Override
             public void call(Throwable throwable) {
                 Log.e(TAG, throwable.getMessage(), throwable);
+                Toast.makeText(TwitterAuthActivity.this,
+                        String.format("Error : %s", throwable.getMessage()),
+                        Toast.LENGTH_LONG).show();
             }
         };
 
@@ -119,6 +123,9 @@ public class TwitterAuthActivity extends ActionBarActivity {
             @Override
             public void call(Throwable throwable) {
                 Log.e(TAG, throwable.getMessage(), throwable);
+                Toast.makeText(TwitterAuthActivity.this,
+                        String.format("Error : %s", throwable.getMessage()),
+                        Toast.LENGTH_LONG).show();
             }
         };
 
