@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
         RelativeLayout listTweetsLayout = (RelativeLayout) getLayoutInflater()
-                .inflate(R.layout.fragment_list_tweets, null);
+                .inflate(R.layout.fragment_list_tweets, layout, false);
 
         RecyclerView listTweets = (RecyclerView) listTweetsLayout.findViewById(R.id.list_tweets);
         listTweets.setLayoutManager(new LinearLayoutManager(this));
