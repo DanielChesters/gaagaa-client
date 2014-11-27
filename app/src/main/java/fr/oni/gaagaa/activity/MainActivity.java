@@ -101,33 +101,37 @@ public class MainActivity extends ActionBarActivity
         } else {
             twitterApiModule = new TwitterApiModule();
             twitterApiModule.init(token, tokenSecret);
-            twitterUserTimelineSubscription = twitterApiModule.getHomeTimeline(20)
-                    .flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
-                        @Override
-                        public Observable<Tweet> call(List<Tweet> tweets) {
-                            return Observable.from(tweets);
-                        }
-                    })
-                    .subscribe(new Action1<Tweet>() {
-                        @Override
-                        public void call(Tweet tweet) {
-                            tweetsAdapter.getTweets().add(tweet);
-                        }
-                    }, new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-                            Log.e(TAG, throwable.getMessage(), throwable);
-                            Toast.makeText(MainActivity.this,
-                                    String.format("Error : %s", throwable.getMessage()),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }, new Action0() {
-                        @Override
-                        public void call() {
-                            tweetsAdapter.notifyDataSetChanged();
-                        }
-                    });
+            updateHomeTimeline();
         }
+    }
+
+    private void updateHomeTimeline() {
+        twitterUserTimelineSubscription = twitterApiModule.getHomeTimeline(20)
+                .flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
+                    @Override
+                    public Observable<Tweet> call(List<Tweet> tweets) {
+                        return Observable.from(tweets);
+                    }
+                })
+                .subscribe(new Action1<Tweet>() {
+                    @Override
+                    public void call(Tweet tweet) {
+                        tweetsAdapter.getTweets().add(tweet);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage(), throwable);
+                        Toast.makeText(MainActivity.this,
+                                String.format("Error : %s", throwable.getMessage()),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }, new Action0() {
+                    @Override
+                    public void call() {
+                        tweetsAdapter.notifyDataSetChanged();
+                    }
+                });
     }
 
     @Override
@@ -182,12 +186,16 @@ public class MainActivity extends ActionBarActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        switch (id) {
+            case R.id.action_settings:
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            case R.id.action_refresh:
+                updateHomeTimeline();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
