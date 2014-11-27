@@ -32,6 +32,7 @@ ext {
     signpostVersion='1.2.1.2'
     rxjavaVersion='1.0.0'
     rxandroidVersion='0.23.0'
+    picassoVersion='2.4.0'
 }
 
 dependencies {
@@ -46,4 +47,5 @@ dependencies {
     compile "oauth.signpost:signpost-core:$signpostVersion"
     compile "io.reactivex:rxjava:$rxjavaVersion"
     compile "io.reactivex:rxandroid:$rxandroidVersion"
+    compile "com.squareup.picasso:picasso:$picassoVersion"
 }

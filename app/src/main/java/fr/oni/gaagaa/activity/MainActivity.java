@@ -83,7 +83,7 @@ public class MainActivity extends ActionBarActivity
         listTweets.setLayoutManager(new LinearLayoutManager(this));
         listTweets.setItemAnimator(new DefaultItemAnimator());
 
-        tweetsAdapter = new TweetsAdapter();
+        tweetsAdapter = new TweetsAdapter(getApplicationContext());
         listTweets.setAdapter(tweetsAdapter);
 
         layout.addView(listTweetsLayout);

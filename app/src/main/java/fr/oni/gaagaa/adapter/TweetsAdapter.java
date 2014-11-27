@@ -1,11 +1,15 @@
 package fr.oni.gaagaa.adapter;
 
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +20,11 @@ import fr.oni.gaagaa.model.twitter.Tweet;
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
     private List<Tweet> tweets;
+    private Context context;
+
+    public TweetsAdapter(Context context) {
+        this.context = context;
+    }
 
     public List<Tweet> getTweets() {
         if (tweets == null) {
@@ -34,9 +43,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Tweet tweet = getTweets().get(position);
-        String text = String.format(String.format("%s\n%s (%s)", tweet.getText(),
-                tweet.getUser().getName(), tweet.getDateCreated()));
-        holder.getTextView().setText(text);
+        holder.getTextView().setText(tweet.getText());
+        holder.getUserView().setText(String.format("%s (@%s)", tweet.getUser().getName(),
+                tweet.getUser().getScreenName()));
+        final ImageView profileView = holder.getProfileView();
+        Picasso.with(context).load(tweet.getUser().getProfileImageUrlHttps())
+                .resize(profileView.getLayoutParams().width, profileView.getLayoutParams().height)
+                .centerCrop()
+                .into(profileView);
+        holder.getDateView().setText(tweet.getDateCreated());
     }
 
     @Override
@@ -46,10 +61,28 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
     public static final class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
+        private TextView userView;
+        private TextView dateView;
+        private ImageView profileView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.textView = (TextView) itemView.findViewById(R.id.tweet_text);
+            this.userView = (TextView) itemView.findViewById(R.id.tweet_user);
+            this.dateView = (TextView) itemView.findViewById(R.id.tweet_date);
+            this.profileView = (ImageView) itemView.findViewById(R.id.user_profile_image);
+        }
+
+        public TextView getUserView() {
+            return userView;
+        }
+
+        public TextView getDateView() {
+            return dateView;
+        }
+
+        public ImageView getProfileView() {
+            return profileView;
         }
 
         public TextView getTextView() {
