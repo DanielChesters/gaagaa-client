@@ -73,4 +73,27 @@ public class Tweet {
     public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Tweet tweet = (Tweet) o;
+
+        if (id != null ? !id.equals(tweet.id) : tweet.id != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

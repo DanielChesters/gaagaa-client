@@ -12,23 +12,30 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import fr.oni.gaagaa.R;
 import fr.oni.gaagaa.model.twitter.Tweet;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
-    private List<Tweet> tweets;
+    private SortedSet<Tweet> tweets;
     private Context context;
 
     public TweetsAdapter(Context context) {
         this.context = context;
     }
 
-    public List<Tweet> getTweets() {
+    public SortedSet<Tweet> getTweets() {
         if (tweets == null) {
-            tweets = new ArrayList<>();
+            tweets = new TreeSet<>(new Comparator<Tweet>() {
+                @Override
+                public int compare(Tweet tweet1, Tweet tweet2) {
+                    return tweet2.getDateCreated().compareTo(tweet1.getDateCreated());
+                }
+            });
         }
         return tweets;
     }
@@ -42,7 +49,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Tweet tweet = getTweets().get(position);
+        Tweet tweet = new ArrayList<>(getTweets()).get(position);
         holder.getTextView().setText(tweet.getText());
         holder.getUserView().setText(String.format("%s (@%s)", tweet.getUser().getName(),
                 tweet.getUser().getScreenName()));
