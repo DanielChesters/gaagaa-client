@@ -101,7 +101,7 @@ public class MainActivity extends ActionBarActivity
         } else {
             twitterApiModule = new TwitterApiModule();
             twitterApiModule.init(token, tokenSecret);
-            twitterUserTimelineSubscription = twitterApiModule.getUserTimeline("___Oni___", 20)
+            twitterUserTimelineSubscription = twitterApiModule.getHomeTimeline(20)
                     .flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
                         @Override
                         public Observable<Tweet> call(List<Tweet> tweets) {

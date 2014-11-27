@@ -47,4 +47,10 @@ public class TwitterApiModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
     }
+
+    public Observable<List<Tweet>> getHomeTimeline(int count) {
+        return twitterApi.getHomeTimeline(count)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+    }
 }

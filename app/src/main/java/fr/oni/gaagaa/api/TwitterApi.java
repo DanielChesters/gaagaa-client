@@ -24,4 +24,7 @@ public interface TwitterApi {
 
     @GET("/statuses/user_timeline.json")
     Observable<List<Tweet>> getUserTimeline(@Query("screen_name") String screenName, @Query("count") int count);
+
+    @GET("/statuses/home_timeline.json")
+    Observable<List<Tweet>> getHomeTimeline(@Query("count") int count);
 }
