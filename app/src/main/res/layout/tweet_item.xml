@@ -20,6 +20,8 @@
             android:id="@+id/tweet_text"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
+            android:linksClickable="true"
+            android:autoLink="web"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <TextView
