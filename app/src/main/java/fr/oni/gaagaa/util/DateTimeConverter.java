@@ -19,7 +19,8 @@ public class DateTimeConverter implements JsonDeserializer<DateTime>, JsonSerial
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("E MMM d H:m:s Z YYYY");
 
     @Override
-    public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public DateTime deserialize(JsonElement json, Type typeOfT,
+                                JsonDeserializationContext context) throws JsonParseException {
         return DATE_TIME_FORMATTER.parseDateTime(json.getAsString());
     }
 

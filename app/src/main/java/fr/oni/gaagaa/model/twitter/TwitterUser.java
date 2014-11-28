@@ -2,12 +2,14 @@ package fr.oni.gaagaa.model.twitter;
 
 import com.google.gson.annotations.SerializedName;
 
+import fr.oni.gaagaa.api.TwitterConstant;
+
 public class TwitterUser {
     @SerializedName("name")
     private String name;
     @SerializedName("profile_image_url_https")
     private String profileImageUrlHttps;
-    @SerializedName("screen_name")
+    @SerializedName(TwitterConstant.SCREEN_NAME)
     private String screenName;
 
     public String getName() {
