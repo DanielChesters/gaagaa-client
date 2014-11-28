@@ -33,6 +33,7 @@ ext {
     rxjavaVersion='1.0.0'
     rxandroidVersion='0.23.0'
     picassoVersion='2.4.0'
+    jodaVersion='2.5'
 }
 
 dependencies {
@@ -48,4 +49,5 @@ dependencies {
     compile "io.reactivex:rxjava:$rxjavaVersion"
     compile "io.reactivex:rxandroid:$rxandroidVersion"
     compile "com.squareup.picasso:picasso:$picassoVersion"
+    compile "joda-time:joda-time:$jodaVersion"
 }

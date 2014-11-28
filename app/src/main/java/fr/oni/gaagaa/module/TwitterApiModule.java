@@ -53,4 +53,16 @@ public class TwitterApiModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
     }
+
+    public Observable<List<Tweet>> directMessages(int count) {
+        return twitterApi.directMessages(count)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Observable<List<Tweet>> getMentionsTimeline(int count) {
+        return twitterApi.getMentionsTimeline(count)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+    }
 }

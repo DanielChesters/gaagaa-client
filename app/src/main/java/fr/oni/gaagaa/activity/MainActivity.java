@@ -52,12 +52,25 @@ public class MainActivity extends ActionBarActivity
     private CharSequence title;
 
     private Subscription twitterUserTimelineSubscription;
+    private Subscription directMessagesSubscription;
+    private Subscription mentionsTimelineSubscription;
     private TwitterApiModule twitterApiModule;
     private TweetsAdapter tweetsAdapter;
+    private RecyclerView listTweets;
 
     @Override
     protected void onDestroy() {
-        twitterUserTimelineSubscription.unsubscribe();
+        if (twitterUserTimelineSubscription != null) {
+            twitterUserTimelineSubscription.unsubscribe();
+        }
+
+        if (directMessagesSubscription != null) {
+            directMessagesSubscription.unsubscribe();
+        }
+
+        if (mentionsTimelineSubscription != null) {
+            mentionsTimelineSubscription.unsubscribe();
+        }
         super.onDestroy();
     }
 
@@ -79,7 +92,7 @@ public class MainActivity extends ActionBarActivity
         RelativeLayout listTweetsLayout = (RelativeLayout) getLayoutInflater()
                 .inflate(R.layout.fragment_list_tweets, layout, false);
 
-        RecyclerView listTweets = (RecyclerView) listTweetsLayout.findViewById(R.id.list_tweets);
+        listTweets = (RecyclerView) listTweetsLayout.findViewById(R.id.list_tweets);
         listTweets.setLayoutManager(new LinearLayoutManager(this));
         listTweets.setItemAnimator(new DefaultItemAnimator());
 
@@ -92,6 +105,11 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
+        initTwitterApiModule();
+        updateHomeTimeline();
+    }
+
+    private void initTwitterApiModule() {
         String token = PrefUtil.getTwitterToken(this);
         String tokenSecret = PrefUtil.getTwitterTokenSecret(this);
 
@@ -99,39 +117,50 @@ public class MainActivity extends ActionBarActivity
             Intent intent = new Intent(this, TwitterAuthActivity.class);
             startActivity(intent);
         } else {
-            twitterApiModule = new TwitterApiModule();
-            twitterApiModule.init(token, tokenSecret);
-            updateHomeTimeline();
+            if (twitterApiModule == null) {
+                twitterApiModule = new TwitterApiModule();
+                twitterApiModule.init(token, tokenSecret);
+            }
         }
     }
 
     private void updateHomeTimeline() {
-        twitterUserTimelineSubscription = twitterApiModule.getHomeTimeline(20)
-                .flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
-                    @Override
-                    public Observable<Tweet> call(List<Tweet> tweets) {
-                        return Observable.from(tweets);
-                    }
-                })
-                .subscribe(new Action1<Tweet>() {
-                    @Override
-                    public void call(Tweet tweet) {
-                        tweetsAdapter.getTweets().add(tweet);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                        Toast.makeText(MainActivity.this,
-                                String.format("Error : %s", throwable.getMessage()),
-                                Toast.LENGTH_LONG).show();
-                    }
-                }, new Action0() {
-                    @Override
-                    public void call() {
-                        tweetsAdapter.notifyDataSetChanged();
-                    }
-                });
+        twitterUserTimelineSubscription = subscription(twitterApiModule.getHomeTimeline(20));
+    }
+
+    private void updateDirectMessage() {
+        directMessagesSubscription = subscription(twitterApiModule.directMessages(10));
+    }
+
+    private void updateMentionsTimeline() {
+        mentionsTimelineSubscription = subscription(twitterApiModule.getMentionsTimeline(20));
+    }
+
+    private Subscription subscription(Observable<List<Tweet>> observable) {
+        return observable.flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
+            @Override
+            public Observable<Tweet> call(List<Tweet> tweets) {
+                return Observable.from(tweets);
+            }
+        }).subscribe(new Action1<Tweet>() {
+            @Override
+            public void call(Tweet tweet) {
+                tweetsAdapter.getTweets().add(tweet);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                Log.e(TAG, throwable.getMessage(), throwable);
+                Toast.makeText(MainActivity.this,
+                        String.format("Error : %s", throwable.getMessage()),
+                        Toast.LENGTH_LONG).show();
+            }
+        }, new Action0() {
+            @Override
+            public void call() {
+                tweetsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -144,19 +173,25 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onSectionAttached(int number) {
+        initTwitterApiModule();
+        tweetsAdapter.clearData();
         switch (number) {
             case 1:
                 title = getString(R.string.title_section1);
+                updateHomeTimeline();
                 break;
             case 2:
                 title = getString(R.string.title_section2);
+                updateMentionsTimeline();
                 break;
             case 3:
                 title = getString(R.string.title_section3);
+                updateDirectMessage();
                 break;
             default:
                 break;
         }
+        listTweets.scrollToPosition(0);
     }
 
     public void restoreActionBar() {
@@ -191,10 +226,28 @@ public class MainActivity extends ActionBarActivity
                 return true;
 
             case R.id.action_refresh:
-                updateHomeTimeline();
+                actionRefresh();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void actionRefresh() {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.container);
+        int position = fragment.getArguments().getInt("section_number");
+        switch (position) {
+            case 1 :
+                updateHomeTimeline();
+                break;
+            case 2:
+                updateMentionsTimeline();
+                break;
+            case 3:
+                updateDirectMessage();
+                break;
+            default:
+                break;
         }
     }
 

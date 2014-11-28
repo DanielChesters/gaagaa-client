@@ -30,14 +30,18 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
     public SortedSet<Tweet> getTweets() {
         if (tweets == null) {
-            tweets = new TreeSet<>(new Comparator<Tweet>() {
-                @Override
-                public int compare(Tweet tweet1, Tweet tweet2) {
-                    return tweet2.getDateCreated().compareTo(tweet1.getDateCreated());
-                }
-            });
+            clearData();
         }
         return tweets;
+    }
+
+    public void clearData() {
+        tweets = new TreeSet<>(new Comparator<Tweet>() {
+            @Override
+            public int compare(Tweet tweet1, Tweet tweet2) {
+                return tweet2.getDateCreated().compareTo(tweet1.getDateCreated());
+            }
+        });
     }
 
     @Override

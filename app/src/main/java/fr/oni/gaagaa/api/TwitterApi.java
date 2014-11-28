@@ -27,4 +27,10 @@ public interface TwitterApi {
 
     @GET("/statuses/home_timeline.json")
     Observable<List<Tweet>> getHomeTimeline(@Query("count") int count);
+
+    @GET("/direct_messages.json")
+    Observable<List<Tweet>> directMessages(@Query("count") int count);
+
+    @GET("/statuses/mentions_timeline.json")
+    Observable<List<Tweet>> getMentionsTimeline(@Query("count") int count);
 }
