@@ -2,9 +2,11 @@ package fr.oni.gaagaa.model.twitter;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.joda.time.DateTime;
+
 public class Tweet {
     @SerializedName("created_at")
-    private String dateCreated;
+    private DateTime dateCreated;
     @SerializedName("id")
     private String id;
     @SerializedName("text")
@@ -66,11 +68,11 @@ public class Tweet {
         this.user = user;
     }
 
-    public String getDateCreated() {
+    public DateTime getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(DateTime dateCreated) {
         this.dateCreated = dateCreated;
     }
 

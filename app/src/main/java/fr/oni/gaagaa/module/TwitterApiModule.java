@@ -5,12 +5,15 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import fr.oni.gaagaa.Config;
 import fr.oni.gaagaa.api.TwitterApi;
 import fr.oni.gaagaa.model.twitter.Tweet;
 import fr.oni.gaagaa.retrofit.SignedOkClient;
+import fr.oni.gaagaa.util.DateTimeConverter;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import retrofit.RestAdapter;
@@ -23,9 +26,13 @@ public class TwitterApiModule {
     private TwitterApi twitterApi;
 
     public void init(String token, String tokenSecret) {
-        OAuthConsumer consumer = new DefaultOAuthConsumer(Config.TWITTER_API_KEY, Config.TWITTER_API_SECRET);
+        OAuthConsumer consumer = new DefaultOAuthConsumer(Config.TWITTER_API_KEY,
+                Config.TWITTER_API_SECRET);
         consumer.setTokenWithSecret(token, tokenSecret);
-        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(DateTime.class, new DateTimeConverter())
+                .create();
         RestAdapter adapter = new RestAdapter.Builder()
                 .setEndpoint("https://api.twitter.com/1.1/")
                 .setClient(new SignedOkClient(consumer))

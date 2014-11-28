@@ -62,7 +62,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 .resize(profileView.getLayoutParams().width, profileView.getLayoutParams().height)
                 .centerCrop()
                 .into(profileView);
-        holder.getDateView().setText(tweet.getDateCreated());
+        holder.getDateView().setText(tweet.getDateCreated().toString());
     }
 
     @Override
