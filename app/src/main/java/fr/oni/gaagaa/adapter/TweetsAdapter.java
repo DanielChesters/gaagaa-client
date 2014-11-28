@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.SortedSet;
@@ -62,7 +65,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 .resize(profileView.getLayoutParams().width, profileView.getLayoutParams().height)
                 .centerCrop()
                 .into(profileView);
-        holder.getDateView().setText(tweet.getDateCreated().toString());
+        Period period = new Period(tweet.getDateCreated(), DateTime.now());
+        holder.getDateView().setText(period.toString());
     }
 
     @Override
