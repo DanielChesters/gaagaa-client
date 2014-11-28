@@ -13,6 +13,10 @@ import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.PeriodFormat;
+import org.joda.time.format.PeriodFormatter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,6 +27,9 @@ import fr.oni.gaagaa.R;
 import fr.oni.gaagaa.model.twitter.Tweet;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.fullDateTime();
+    private static final PeriodFormatter PERIOD_FORMATTER = PeriodFormat.wordBased();
 
     private SortedSet<Tweet> tweets;
     private Context context;
@@ -66,7 +73,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 .centerCrop()
                 .into(profileView);
         Period period = new Period(tweet.getDateCreated(), DateTime.now());
-        holder.getDateView().setText(period.toString());
+        String date;
+        if (period.getDays() > 0 || period.getWeeks() > 0 || period.getMonths() > 0 || period.getYears() > 0) {
+            date = tweet.getDateCreated().toString(DATE_TIME_FORMATTER);
+        } else {
+            date = period.toString(PERIOD_FORMATTER);
+        }
+        holder.getDateView().setText(date);
     }
 
     @Override
