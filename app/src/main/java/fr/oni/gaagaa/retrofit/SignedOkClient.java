@@ -9,10 +9,10 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-import retrofit.client.OkClient;
 import retrofit.client.Request;
+import retrofit.client.UrlConnectionClient;
 
-public class SignedOkClient extends OkClient {
+public class SignedOkClient extends UrlConnectionClient {
     private static final String TAG = SignedOkClient.class.getSimpleName();
     private OAuthConsumer consumer;
 
